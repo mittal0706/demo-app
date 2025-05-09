@@ -53,7 +53,7 @@ pipeline {
                             scp -o StrictHostKeyChecking=no docker-compose.yml ${EC2_USER}@${EC2_HOST}:~/docker-compose.yml
                             ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
                                 # Initialize swarm if not already initialized
-                                docker swarm init 2>/dev/null || true
+                                docker swarm init --advertise-addr $(hostname -i) 2>/dev/null || true
                                 
                                 # Deploy or update the stack
                                 TAG=${DOCKER_TAG} docker stack deploy -c docker-compose.yml demo-app --with-registry-auth

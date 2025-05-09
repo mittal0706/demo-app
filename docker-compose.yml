@@ -3,7 +3,10 @@ services:
   app:
     image: mittal394/demo-app:${TAG:-latest}
     ports:
-      - "3000:3000"
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: host
     deploy:
       replicas: 2
       mode: replicated
