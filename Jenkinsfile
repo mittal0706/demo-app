@@ -7,7 +7,7 @@ pipeline {
         DOCKER_TAG = "${BUILD_NUMBER}"
         EC2_SSH_KEY = credentials('ec2-sshkey')
         EC2_USER = 'ubuntu'
-        EC2_HOST = 'ec2-100-27-208-11.compute-1.amazonaws.com'
+        EC2_HOST = 'ec2-3-208-31-198.compute-1.amazonaws.com'
     }
     
     triggers {
