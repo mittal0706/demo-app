@@ -76,7 +76,7 @@ pipeline {
                     Build Number: ${BUILD_NUMBER}
                     Docker Image: ${DOCKER_IMAGE}:${DOCKER_TAG}
                 """,
-                to: 'prateek.roy@quokkalabs.com',
+                to: 'prateek.roy@quokkalabs.com, annaya@quokkalabs.com',
                 from: 'mittalgaurav619@gmail.com',
                 replyTo: 'mittalgaurav619@gmail.com',
                 mimeType: 'text/html',
@@ -92,7 +92,7 @@ pipeline {
                     Build Number: ${BUILD_NUMBER}
                     Please check the Jenkins console output for details.
                 """,
-                to: 'prateek.roy@quokkalabs.com',
+                to: 'prateek.roy@quokkalabs.com, annaya@quokkalabs.com',
                 from: 'mittalgaurav619@gmail.com',
                 replyTo: 'mittalgaurav619@gmail.com',
                 mimeType: 'text/html',
