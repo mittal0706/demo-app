@@ -32,7 +32,9 @@ pipeline {
         
         stage('Login to DockerHub') {
             steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                withCredentials([usernamePassword(credentialsId: 'docker-login', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                }
             }
         }
         
@@ -69,9 +71,32 @@ pipeline {
         success {
             emailext (
                 subject: "Pipeline Success: ${currentBuild.fullDisplayName}",
-                body: "Your pipeline has completed successfully. \nBuild Number: ${BUILD_NUMBER} \nDocker Image: ${DOCKER_IMAGE}:${DOCKER_TAG}",
+                body: """
+                    Your pipeline has completed successfully.
+                    Build Number: ${BUILD_NUMBER}
+                    Docker Image: ${DOCKER_IMAGE}:${DOCKER_TAG}
+                """,
                 to: 'prateek.roy@quokkalabs.com',
-                from: 'mittalgaurav619@gmail.com'
+                from: 'mittalgaurav619@gmail.com',
+                replyTo: 'mittalgaurav619@gmail.com',
+                mimeType: 'text/html',
+                attachLog: true
+            )
+        }
+        
+        failure {
+            emailext (
+                subject: "Pipeline Failed: ${currentBuild.fullDisplayName}",
+                body: """
+                    Your pipeline has failed.
+                    Build Number: ${BUILD_NUMBER}
+                    Please check the Jenkins console output for details.
+                """,
+                to: 'prateek.roy@quokkalabs.com',
+                from: 'mittalgaurav619@gmail.com',
+                replyTo: 'mittalgaurav619@gmail.com',
+                mimeType: 'text/html',
+                attachLog: true
             )
         }
         
