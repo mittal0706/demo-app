@@ -8,6 +8,7 @@ pipeline {
         EC2_SSH_KEY = credentials('ec2-sshkey')
         EC2_USER = 'ubuntu'
         EC2_HOST = 'ec2-3-208-31-198.compute-1.amazonaws.com'
+        EMAIL_RECIPIENTS = 'prateek.roy@quokkalabs.com,ananda.yashaswi@quokkalabs.com'
     }
     
     triggers {
@@ -69,35 +70,54 @@ pipeline {
     
     post {
         success {
-            emailext (
-                subject: "Pipeline Success: ${currentBuild.fullDisplayName}",
-                body: """
-                    Your pipeline has completed successfully.
-                    Build Number: ${BUILD_NUMBER}
-                    Docker Image: ${DOCKER_IMAGE}:${DOCKER_TAG}
-                """,
-                to: 'prateek.roy@quokkalabs.com, annaya@quokkalabs.com',
-                from: 'mittalgaurav619@gmail.com',
-                replyTo: 'mittalgaurav619@gmail.com',
-                mimeType: 'text/html',
-                attachLog: true
-            )
+            script {
+                def emailBody = """
+                    <p>Pipeline execution was successful!</p>
+                    <p><strong>Build Information:</strong></p>
+                    <ul>
+                        <li>Build Number: ${BUILD_NUMBER}</li>
+                        <li>Docker Image: ${DOCKER_IMAGE}:${DOCKER_TAG}</li>
+                        <li>Duration: ${currentBuild.durationString}</li>
+                    </ul>
+                    <p>Check the <a href="${BUILD_URL}">Build URL</a> for more details.</p>
+                """
+                
+                emailext (
+                    subject: "[SUCCESS] Pipeline Build #${BUILD_NUMBER}",
+                    body: emailBody,
+                    to: env.EMAIL_RECIPIENTS,
+                    from: 'mittalgaurav619@gmail.com',
+                    replyTo: 'mittalgaurav619@gmail.com',
+                    mimeType: 'text/html',
+                    attachLog: true,
+                    compressLog: true
+                )
+            }
         }
         
         failure {
-            emailext (
-                subject: "Pipeline Failed: ${currentBuild.fullDisplayName}",
-                body: """
-                    Your pipeline has failed.
-                    Build Number: ${BUILD_NUMBER}
-                    Please check the Jenkins console output for details.
-                """,
-                to: 'prateek.roy@quokkalabs.com, annaya@quokkalabs.com',
-                from: 'mittalgaurav619@gmail.com',
-                replyTo: 'mittalgaurav619@gmail.com',
-                mimeType: 'text/html',
-                attachLog: true
-            )
+            script {
+                def emailBody = """
+                    <p style="color: red;">Pipeline execution failed!</p>
+                    <p><strong>Build Information:</strong></p>
+                    <ul>
+                        <li>Build Number: ${BUILD_NUMBER}</li>
+                        <li>Duration: ${currentBuild.durationString}</li>
+                    </ul>
+                    <p>Please check the <a href="${BUILD_URL}console">Console Output</a> for error details.</p>
+                """
+                
+                emailext (
+                    subject: "[FAILED] Pipeline Build #${BUILD_NUMBER}",
+                    body: emailBody,
+                    to: env.EMAIL_RECIPIENTS,
+                    from: 'mittalgaurav619@gmail.com',
+                    replyTo: 'mittalgaurav619@gmail.com',
+                    mimeType: 'text/html',
+                    attachLog: true,
+                    compressLog: true
+                )
+            }
         }
         
         always {
