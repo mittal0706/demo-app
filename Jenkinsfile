@@ -70,7 +70,7 @@ pipeline {
             emailext (
                 subject: "Pipeline Success: ${currentBuild.fullDisplayName}",
                 body: "Your pipeline has completed successfully. \nBuild Number: ${BUILD_NUMBER} \nDocker Image: ${DOCKER_IMAGE}:${DOCKER_TAG}",
-                to: 'mittalg394@gmail.com',
+                to: 'pratkke.roy@quokkalabs.com',
                 from: 'mittalgaurav619@gmail.com'
             )
         }
