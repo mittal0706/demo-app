@@ -8,6 +8,7 @@ pipeline {
         EC2_SSH_KEY = credentials('ec2-sshkey')
         EC2_USER = 'ubuntu'
         EC2_HOST = 'ec2-3-208-31-198.compute-1.amazonaws.com'
+        EC2_HOST = 'ec2-3-208-31-198.compute-1.amazonaws.com'
     }
     
     triggers {
@@ -52,11 +53,14 @@ pipeline {
                         sh """
                             scp -o StrictHostKeyChecking=no docker-compose.yml ${EC2_USER}@${EC2_HOST}:~/docker-compose.yml
                             ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} "
+                            ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} "
                                 # Initialize swarm if not already initialized
+                                docker swarm init --advertise-addr \$(hostname -i) 2>/dev/null || true
                                 docker swarm init --advertise-addr \$(hostname -i) 2>/dev/null || true
                                 
                                 # Deploy or update the stack
                                 TAG=${DOCKER_TAG} docker stack deploy -c docker-compose.yml demo-app --with-registry-auth
+                            "
                             "
                         """
                     }
